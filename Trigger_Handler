@@ -1,0 +1,79 @@
+/********************************************************************
+Trigger Handler for CreateCase_Trigger and CreateTask
+*******************************************************************/
+public class Trigger_Handler {
+    
+/********************************************************************
+Handler method to create new Case when a Contact is created
+*******************************************************************/
+    public static void createCase(List<Contact> newContacts){
+        list<Case> lstCase = new list<Case>();
+        for(Contact Con: newContacts){
+            Case cas = new Case ();
+            cas.ContactId = Con.Id;
+            cas.Status = System.Label.Case_Status;
+            cas.Origin = System.Label.Case_Origin;
+            cas.OwnerId = Con.OwnerId;
+            if(Con.AccountId != null){
+                cas.AccountId = Con.AccountId;
+            }
+            if(Con.Level__c == System.Label.Contact_Primary){
+                cas.Priority = System.Label.Priority_High;
+            }
+            else if(Con.Level__c == System.Label.Contact_Secondary){
+                cas.Priority = System.Label.Priority_Medium;
+            }
+            else{
+                cas.Priority = System.Label.Priority_Low;
+            }
+            lstCase.add(cas);
+            
+        }
+        try{
+              insert lstCase;  
+        }
+        catch(exception ex){
+            system.debug('Exception---'+ex);
+        }
+    }
+    
+/*********************************************************************
+Handler method to create new Task when a Case is created
+*******************************************************************/
+    public static void createTask(List<Case> newCases){ 
+        list<Task> lstTask = new list<Task>();
+        for(Case cas: newCases){
+            Task tsk = new Task ();
+            tsk.Status  = System.Label.Task_Status;
+            tsk.Subject = System.Label.Task_Subject + ' '+ cas.CaseNumber;
+            tsk.Priority = System.Label.Task_Priority;
+            tsk.OwnerId = cas.OwnerId;
+            tsk.WhoId = cas.ContactId;
+            if(cas.AccountId !=null){
+                tsk.WhatId = cas.AccountId;
+            }
+            if(cas.Priority == System.Label.Priority_High){
+                tsk.ActivityDate = System.today()+7;     
+                
+            }
+            else if(cas.Priority == System.Label.Priority_Medium){
+                tsk.ActivityDate = System.today()+14;     
+                
+            }
+            else{
+                tsk.ActivityDate = System.today()+21;     
+            }
+            
+            lstTask.add(tsk);
+            
+        }
+        try{
+              insert lstTask; 
+        }
+        catch(exception ex){
+            system.debug('Exception---'+ex);
+        }
+        
+    }
+    
+}
