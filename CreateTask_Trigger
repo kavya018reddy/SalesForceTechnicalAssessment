@@ -1,0 +1,8 @@
+/***************************************************
+ This trigger is fired after case is inserted, to create a new task corresponding to the case.
+ **************************************************/
+trigger CreateTask_Trigger on Case (after insert) {
+    
+     Trigger_Handler.createTask(trigger.new);
+
+}
