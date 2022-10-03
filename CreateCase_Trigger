@@ -1,0 +1,9 @@
+/***************************************************
+ This trigger is fired after contact is inserted, to create a new case corresponding to the contact.
+ **************************************************/
+
+trigger CreateCase_Trigger on Contact (after insert) {
+
+    Trigger_Handler.createCase(trigger.new);
+
+}
